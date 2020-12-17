@@ -1,5 +1,6 @@
 [scripts]
-spider = "scrapy crawl products -O"
+crawl = "scrapy crawl products -O"
+wildberries-shell = "pipenv run scrapy shell 'https://www.wildberries.ru/catalog/obuv/zhenskaya/sabo-i-myuli/myuli'"
 
 [[source]]
 url = "https://pypi.org/simple"
@@ -8,7 +9,6 @@ name = "pypi"
 
 [packages]
 scrapy = "*"
-scrapy-selenium = "*"
 
 [dev-packages]
 
