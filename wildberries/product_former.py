@@ -6,6 +6,8 @@ import urllib.request
 from http.client import HTTPResponse
 import re
 
+VIEW360_IMAGES_COUNT = 11
+
 logger = logging.getLogger(__name__)
 
 
@@ -36,8 +38,8 @@ def form_product(response: scrapy.http.Response) -> item.Product:
         section=response.meta["section"],
         price_data=price,
         stock=item.Stock(
-            in_stock=True,
-            count=100500,
+            in_stock=True,  # didn't found any info on site
+            count=-1,  # didn't found any info on site
         ),
         assets=assets,
         metadata=metadata,
@@ -79,6 +81,8 @@ def form_price(response: scrapy.http.Response) -> item.Price:
 
 def check_url(url):
     try:
+        # Not good idea to use urlopen while parse. This slows down processing very much
+        # But i didn't found better approach yet
         resp: HTTPResponse = urllib.request.urlopen(url)
         code = resp.getcode()
         if code < 400:
@@ -109,18 +113,13 @@ def form_assets(response: scrapy.http.Response):
     # assets
     zoomed_image = response.css("img.MagicZoomFullSizeImage::attr(src)").get()
     images_set = response.css("a.j-carousel-image::attr(href)").getall()
-    view_3d_base_raw = response.css("div.j-3d-container.three-d-container::attr(data-path)").get()
     view_3d_list = []
 
+    view_3d_base_raw = response.css("div.j-3d-container.three-d-container::attr(data-path)").get()
     if view_3d_base_raw:
-        i = 1
-        while True:
+        for i in range(1, VIEW360_IMAGES_COUNT + 1):
             url = ''.join(['http:', view_3d_base_raw, '/', str(i), '.jpg'])
-            if check_url(url):
-                view_3d_list.append(url)
-            else:
-                break
-            i += 1
+            view_3d_list.append(url)
 
     return item.Assets(
         main_image=zoomed_image,
