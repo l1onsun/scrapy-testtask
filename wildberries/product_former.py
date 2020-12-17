@@ -1,10 +1,13 @@
-import scrapy
 import logging
-import wildberries.items as item
-from typing import Optional, Dict
-import urllib.request
-from http.client import HTTPResponse
 import re
+import urllib.request
+import urllib.error
+from http.client import HTTPResponse
+from typing import Optional, Dict
+
+import scrapy
+
+import wildberries.items as item
 
 VIEW360_IMAGES_COUNT = 11
 
@@ -85,11 +88,8 @@ def check_url(url):
         # But i didn't found better approach yet
         resp: HTTPResponse = urllib.request.urlopen(url)
         code = resp.getcode()
-        if code < 400:
-            return True
-        else:
-            return False
-    except:
+        return code < 400
+    except urllib.error.URLError:
         return False
 
 
@@ -97,7 +97,8 @@ def view360(response: scrapy.http.Response):
     view_3d_base_raw = response.css("div.j-3d-container.three-d-container::attr(data-path)").get()
     view_3d_list = []
     if view_3d_base_raw:
-        view_3d_base_url = re.match(r'^/*(.*)$', view_3d_base_raw).group(1)  # remove slashes from left
+        # remove slashes from left
+        view_3d_base_url = re.match(r'^/*(.*)$', view_3d_base_raw).group(1)
 
         i = 1
         while True:
