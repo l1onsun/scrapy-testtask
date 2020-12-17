@@ -1,3 +1,6 @@
+[scripts]
+spider = "scrapy crawl products -O"
+
 [[source]]
 url = "https://pypi.org/simple"
 verify_ssl = true
