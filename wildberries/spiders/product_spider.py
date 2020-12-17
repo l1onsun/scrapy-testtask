@@ -18,7 +18,7 @@ def price_to_float(price_raw) -> Optional[float]:
 
 
 def common_request(url, callback, meta=None):
-    scrapy.Request(url=url, callback=callback, headers=headers, cookies=cookies, meta=meta)
+    return scrapy.Request(url=url, callback=callback, headers=headers, cookies=cookies, meta=meta)
 
 
 class QuotesSpider(scrapy.Spider):
@@ -101,4 +101,4 @@ class QuotesSpider(scrapy.Spider):
         next_page_ref = response.css("a.pagination-next::attr(href)").get()
         if next_page_ref is not None:
             next_page_url = response.urljoin(next_page_ref)
-            yield common_request(url=next_page_url, callback=self.parse_product_card, meta={'section': section})
+            yield common_request(url=next_page_url, callback=self.parse, meta={'section': section})
