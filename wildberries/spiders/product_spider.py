@@ -1,5 +1,7 @@
-import scrapy
 import logging
+
+import scrapy
+
 from wildberries.moscow_headers import headers, cookies
 from wildberries.product_former import form_product
 
@@ -18,19 +20,22 @@ class QuotesSpider(scrapy.Spider):
         super().__init__(**kwargs)
 
     def start_requests(self):
-        yield common_request(url='https://www.wildberries.ru/catalog/obuv/zhenskaya/sabo-i-myuli/myuli',
-                             callback=self.parse)
+        yield common_request(
+            url='https://www.wildberries.ru/catalog/obuv/zhenskaya/sabo-i-myuli/myuli',
+            callback=self.parse)
 
     def parse_product_card(self, response: scrapy.http.Response, **kwargs):
         yield form_product(response)
 
     def parse(self, response: scrapy.http.Response, **kwargs):
         section: list = response.css("ul.bread-crumbs").css("span::text").getall()
-        logger.debug("SECTIONS: " + str(section))
-        for i, product in enumerate(response.css('div.dtList.i-dtList.j-card-item')):
+
+        for product in response.css('div.dtList.i-dtList.j-card-item'):
             product_ref = product.css("a.ref_goods_n_p.j-open-full-product-card::attr(href)").get()
             prod_card_url = response.urljoin(product_ref)
-            yield common_request(url=prod_card_url, callback=self.parse_product_card, meta={'section': section})
+            yield common_request(url=prod_card_url,
+                                 callback=self.parse_product_card,
+                                 meta={'section': section})
             if self.small_sample:
                 break
 
