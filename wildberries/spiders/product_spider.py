@@ -1,7 +1,7 @@
 import scrapy
 import logging
 from wildberries.moscow_headers import headers, cookies
-from wildberries.product_builder import form_product
+from wildberries.product_former import form_product
 
 logger = logging.getLogger(__name__)
 
@@ -12,6 +12,10 @@ def common_request(url, callback, meta=None):
 
 class QuotesSpider(scrapy.Spider):
     name = "products"
+
+    def __init__(self, small_sample=False, **kwargs):
+        self.small_sample = small_sample
+        super().__init__(**kwargs)
 
     def start_requests(self):
         yield common_request(url='https://www.wildberries.ru/catalog/obuv/zhenskaya/sabo-i-myuli/myuli',
@@ -27,6 +31,8 @@ class QuotesSpider(scrapy.Spider):
             product_ref = product.css("a.ref_goods_n_p.j-open-full-product-card::attr(href)").get()
             prod_card_url = response.urljoin(product_ref)
             yield common_request(url=prod_card_url, callback=self.parse_product_card, meta={'section': section})
+            if self.small_sample:
+                break
 
         next_page_ref = response.css("a.pagination-next::attr(href)").get()
         if next_page_ref is not None:
