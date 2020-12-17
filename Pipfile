@@ -1,6 +1,7 @@
 [scripts]
 crawl = "scrapy crawl products -O"
 wildberries-shell = "pipenv run scrapy shell 'https://www.wildberries.ru/catalog/obuv/zhenskaya/sabo-i-myuli/myuli'"
+wildberries-shell-product = "pipenv run scrapy shell 'https://www.wildberries.ru/catalog/13376797/detail.aspx?targetUrl=GP'"
 
 [[source]]
 url = "https://pypi.org/simple"
