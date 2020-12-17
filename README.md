@@ -8,8 +8,15 @@
 ```
 $ pipenv sync
 ```
-
+или
+```
+$ pip install scrapy python-dotenv
+```
 ### Запуск парсинга:
 ```
 $ pipenv run crawl <path/to/result/output.jsonlines>
+```
+или
+```
+$ scrapy crawl products -O <path/to/result/output.jsonlines>
 ```
