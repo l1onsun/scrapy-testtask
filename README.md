@@ -11,5 +11,5 @@ $ pipenv sync
 
 ### Запуск парсинга:
 ```
-$ pipenv run crawl <path/to/result/file.jsonl>
+$ pipenv run crawl <path/to/result/output.jsonlines>
 ```
